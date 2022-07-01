@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Java继承中父类与子类的初始化顺序, JackWen">
+    <meta name="keywords" content="Java中对象锁与类锁的区别, JackWen">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Java继承中父类与子类的初始化顺序 | JackWen</title>
+    <title>Java中对象锁与类锁的区别 | JackWen</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/22.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/17.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Java继承中父类与子类的初始化顺序</h1>
+                    <h1 class="description center-align post-title">Java中对象锁与类锁的区别</h1>
                 </div>
             </div>
         </div>
@@ -443,7 +443,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2022-06-30
+                    2022-07-01
                 </div>
                 
 
@@ -452,14 +452,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    578
+                    1.2k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    2 分
+                    5 分
                 </div>
                 
 
@@ -479,45 +479,205 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>在 Java 编程语言中，对象的初始化是非常结构化的，这样做是为了保证安全。在前面的模块中，看到了当一个特定对象被创建时发生了什么。由于继承性，对象被完成，而且下述行为按顺序发生：<br>存储空间被分配并初始化到 0 值<br>进行显式初始化<br>调用构造方法<br>层次中的每个类都会发生最后两个步骤，是从最上层开始。</p>
-<p>Java 技术安全模式要求在子类执行任何东西之前，描述父类的一个对象的各个方面都必须初始化。因此，Java 编程语言总是在执行子构造方法前调用父类构造方法的版本。有继承的类在运行的时候，一定要记得：初始化子类必先初始化父类，这是Java 程序的一个基本运行过程。<br>比如：</p>
-<pre><code>1. public class Test extends Parent &#123;
-2.   private String name;
-3.   private int age;
-4.   public Test() &#123;
-5.   name=&quot;Tom&quot;;
-6.   age=20;
-7.   &#125;
-8.   public static void main(String[] args) &#123;
-9.   Test t = new Test();
-10. System.out.println(t.name + &quot;的年龄是&quot; + t.age);
-11. &#125;
-12. &#125;
-13. class Parent &#123;
-14. private int num = 1;
-15. public Parent() &#123;
-16. System.out.println(&quot;现在初始化父类&quot;);
-17. &#125;
-18. public void test() &#123;
-19. System.out.println(&quot;这是父类的test方法&quot;);
-20. &#125;
-21. &#125;
+                <h1 id="一、对象锁"><a href="#一、对象锁" class="headerlink" title="一、对象锁"></a>一、对象锁</h1><p>对象锁，顾名思义是锁住对象，不同实例的锁互不影响。<br>对象锁有两种加锁的方式，主要却在于Synchronized作用的地方的不同</p>
+<h2 id="1-作用在实例方法上"><a href="#1-作用在实例方法上" class="headerlink" title="1.作用在实例方法上"></a>1.作用在实例方法上</h2><pre><code>public synchronized void method（）&#123;&#125;
 </code></pre>
-<p><strong>上述类的基本运行顺序是：</strong></p>
-<ul>
-<li>先运行到第 8 行，这是程序的入口。</li>
-<li>然后运行到第 9 行，这里要 new 一个 Test，就要调用 Test 的构造方法。</li>
-<li>就运行到第 4 行，注意：初始化子类必先初始化父类。</li>
-<li>要先初始化父类，所以运行到第 15 行。</li>
-<li>然后是第 14 行，初始化一个类，必须先初始化它的属性。</li>
-<li>然后是第 16 行。</li>
-<li>然后是第 17 行，表示父类初始化完成。</li>
-<li>然后是回到子类，开始初始化属性，因此运行到第 2 行，然后是第 3 行。</li>
-<li>子类属性初始化完过后，才回到子类的构造方法，执行里面的代码，也就是第 5、6 行。</li>
-<li>然后是第7 行，表示 new 一个 Test 实例完成。</li>
-<li>然后回到 main 方法中执行第 10 行。</li>
-<li>然后是第 11 行。</li>
-</ul>
+<h2 id="2-作用在代码块上"><a href="#2-作用在代码块上" class="headerlink" title="2.作用在代码块上"></a>2.作用在代码块上</h2><pre><code>public void method（）&#123;
+   synchronized(this)&#123;
+   //这里是需要同步的部分
+ &#125;
+&#125;
+</code></pre>
+<p><strong>持有相同对象锁的地方会出现互斥：</strong></p>
+<pre><code> public synchronized  void method1()&#123;
+while (true)&#123;
+System.out.println(Thread.currentThread().getName()+&quot;持有了对象锁&quot;);
+try &#123;
+Thread.sleep(3000);
+&#125; catch (InterruptedException e) &#123;
+e.printStackTrace();
+&#125;
+&#125;
+&#125;
+public synchronized  void method2()&#123;
+while (true)&#123;
+System.out.println(Thread.currentThread().getName()+&quot;持有了对象锁&quot;);
+try &#123;
+Thread.sleep(3000);
+&#125; catch (InterruptedException e) &#123;
+e.printStackTrace();
+&#125;
+&#125;
+&#125;
+ public static void main(String[] args) &#123;
+SynchronizedTest test1=new SynchronizedTest();
+SynchronizedTest test2=new SynchronizedTest();
+new Thread(new Runnable() &#123;
+@Override
+public void run() &#123;
+test1.method1();
+&#125;
+&#125;).start();
+new Thread(new Runnable() &#123;
+@Override
+public void run() &#123;
+test1.method2();
+&#125;
+&#125;).start();
+&#125;
+</code></pre>
+<p><strong>执行结果：</strong></p>
+<pre><code>Thread-0持有了对象锁
+Thread-0持有了对象锁
+Thread-0持有了对象锁
+Thread-0持有了对象锁
+Thread-0持有了对象锁
+Thread-0持有了对象锁
+Thread-0持有了对象锁
+</code></pre>
+<p>这里的运行结果实际上陷入了死循环。因为我设置了while(ture),可以看到，Thread-0持有了当前对象的锁之后，就会排斥持有相同对象锁的线程。<br>synchronized修饰在实例方法上，<strong>代表着这里锁的是当前对象this.</strong></p>
+<p><strong>那么对于不同的对象，将不会产生相互影响：</strong></p>
+<pre><code>public static void main(String[] args) &#123;
+SynchronizedTest test1=new SynchronizedTest();
+SynchronizedTest test2=new SynchronizedTest();
+new Thread(new Runnable() &#123;
+@Override
+public void run() &#123;
+test1.method1();
+&#125;
+&#125;).start();
+new Thread(new Runnable() &#123;
+@Override
+public void run() &#123;
+test2.method2();//调用不同对象的方法
+&#125;
+&#125;).start();
+&#125;
+</code></pre>
+<p>运行结果：</p>
+<pre><code>Thread-0持有了对象锁
+Thread-1持有了对象锁
+Thread-0持有了对象锁
+Thread-1持有了对象锁
+Thread-0持有了对象锁
+Thread-1持有了对象锁
+</code></pre>
+<p>可以看到持有不同对象锁的线程互不影响。</p>
+<p>synchronized(object){}的效果和在实例方法上加锁一样，不同的是可以在（）里添加不同的对象，例如：</p>
+<pre><code>synchronized(object1)&#123;&#125;
+synchronized(object2)&#123;&#125;
+</code></pre>
+<p>当括号里的对象是一样时，表示持有的是同一对象锁，反之，就不是同一对象锁，那么线程调用时互不干扰。<br>当synchronized(object){}（）中的对象与实例方法上锁的是同一对象，那么将会互斥。例如：</p>
+<pre><code>public synchronized void method（）&#123;&#125;
+public void method（）&#123;
+   synchronized(this)&#123;
+   //这里是需要同步的部分
+ &#125;
+</code></pre>
+<p>这里，都代表锁的是当前类的对象，所持有的锁是同一把。</p>
+<h1 id="二、类锁"><a href="#二、类锁" class="headerlink" title="二、类锁"></a>二、类锁</h1><p>不管多少对象都共用同一把锁，同步执行，一个线程执行结束、其他的才能够调用同步的部分<br>也是有两种不同的加锁方式。不同的类锁互不影响</p>
+<h2 id="1-用synchronized修饰静态方法"><a href="#1-用synchronized修饰静态方法" class="headerlink" title="1.用synchronized修饰静态方法"></a>1.用synchronized修饰静态方法</h2><pre><code>public synchronized static void method（）
+</code></pre>
+<h2 id="2-作用在代码块上-1"><a href="#2-作用在代码块上-1" class="headerlink" title="2.作用在代码块上"></a>2.作用在代码块上</h2><pre><code>public void method（）&#123;
+   synchronized(object.class)&#123;
+   &#125;
+&#125;
+</code></pre>
+<p>当持有类锁时，所有实例调用这个方法上都会互相排斥。</p>
+<pre><code> public synchronized static void staticMethod1()&#123;
+while (true)&#123;
+System.out.println(Thread.currentThread().getName()+&quot;持有了类锁&quot;);
+try &#123;
+Thread.sleep(3000);
+&#125; catch (InterruptedException e) &#123;
+e.printStackTrace();
+&#125;
+&#125;
+&#125;
+public synchronized static void staticMethod2()&#123;
+while (true)&#123;
+System.out.println(Thread.currentThread().getName()+&quot;持有了类锁&quot;);
+try &#123;
+Thread.sleep(3000);
+&#125; catch (InterruptedException e) &#123;
+e.printStackTrace();
+&#125;
+&#125;
+&#125;
+ public static void main(String[] args) &#123;
+SynchronizedTest test1=new SynchronizedTest();
+SynchronizedTest test2=new SynchronizedTest();
+new Thread(new Runnable() &#123;
+@Override
+public void run() &#123;
+test1.staticMethod1();
+&#125;
+&#125;).start();
+new Thread(new Runnable() &#123;
+@Override
+public void run() &#123;
+test2.staticMethod2();
+&#125;
+&#125;).start();
+&#125;
+</code></pre>
+<p>运行结果：</p>
+<pre><code>Thread-0持有了类锁
+Thread-0持有了类锁
+Thread-0持有了类锁
+Thread-0持有了类锁
+Thread-0持有了类锁
+Thread-0持有了类锁
+</code></pre>
+<p>可以看到，虽说调用的是不同对象的同步方法，但还是产生了互斥。</p>
+<p><strong>对象锁和类锁会互斥吗？</strong></p>
+<p>//对象锁</p>
+<pre><code>    public synchronized  void method1()&#123;
+while (true)&#123;
+System.out.println(Thread.currentThread().getName()+&quot;持有了对象锁&quot;);
+try &#123;
+Thread.sleep(3000);
+&#125; catch (InterruptedException e) &#123;
+e.printStackTrace();
+&#125;
+&#125;
+&#125;
+</code></pre>
+<p>//类锁</p>
+<pre><code> public synchronized static void staticMethod1()&#123;
+while (true)&#123;
+System.out.println(Thread.currentThread().getName()+&quot;持有了类锁&quot;);
+try &#123;
+Thread.sleep(3000);
+&#125; catch (InterruptedException e) &#123;
+e.printStackTrace();
+&#125;
+&#125;
+&#125;
+
+ new Thread(new Runnable() &#123;
+@Override
+public void run() &#123;
+test1.method1();
+&#125;
+&#125;).start();
+new Thread(new Runnable() &#123;
+@Override
+public void run() &#123;
+test1.staticMethod1();
+&#125;
+&#125;).start();
+&#125;
+</code></pre>
+<p>运行结果：</p>
+<pre><code>Thread-0持有了对象锁
+Thread-1持有了类锁
+Thread-0持有了对象锁
+Thread-1持有了类锁
+Thread-0持有了对象锁
+Thread-1持有了类锁
+</code></pre>
+<p>可以看到对象锁和类锁互不影响。</p>
 
                 
             </div>
@@ -544,7 +704,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://xiaoxiaosonga.github.io/2022/0630undefined.html">https://xiaoxiaosonga.github.io/2022/0630undefined.html</a>
+                    <a href="https://xiaoxiaosonga.github.io/2022/0701undefined.html">https://xiaoxiaosonga.github.io/2022/0701undefined.html</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -757,9 +917,9 @@
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="Java中对象锁与类锁的区别">
+                        <img src="/medias/featureimages/19.jpg" class="responsive-img" alt="Java中线程同步的几种方法">
                         
-                        <span class="card-title">Java中对象锁与类锁的区别</span>
+                        <span class="card-title">Java中线程同步的几种方法</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -790,13 +950,13 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2022/0629undefined.html">
+                <a href="/2022/0630undefined.html">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/18.jpg" class="responsive-img" alt="JVM之内存结构">
+                        <img src="/medias/featureimages/22.jpg" class="responsive-img" alt="Java继承中父类与子类的初始化顺序">
                         
-                        <span class="card-title">JVM之内存结构</span>
+                        <span class="card-title">Java继承中父类与子类的初始化顺序</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -807,7 +967,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-06-29
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-06-30
                             </span>
                         <span class="publish-author">
                             
